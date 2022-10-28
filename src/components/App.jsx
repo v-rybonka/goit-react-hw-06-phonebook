@@ -17,7 +17,6 @@ export class App extends Component {
   };
 
   hendlerAddContact = contact => {
-    console.log(contact);
     const { contacts } = this.state;
     if (contacts.filter(({ name }) => name === contact.name).length !== 0) {
       alert(contact.name + ' is already in contacts!');
@@ -45,10 +44,22 @@ export class App extends Component {
       contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parseContacts = JSON.parse(contacts);
+    if (parseContacts) {
+      this.setState({ contacts: parseContacts });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const filteredResults = this.filterContacts();
-    console.log(filteredResults);
+
     return (
       <Container>
         <Section title="Phonebook">
