@@ -46,9 +46,9 @@ export class App extends Component {
   };
   componentDidMount() {
     const contacts = localStorage.getItem('contacts');
-    const parseContacts = JSON.parse(contacts);
-    if (parseContacts) {
-      this.setState({ contacts: parseContacts });
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -66,10 +66,13 @@ export class App extends Component {
           <ContactForm onAddContact={this.hendlerAddContact} />
         </Section>
         <Section title="Contacts">
-          <Filter
-            filter={this.filter}
-            onFilterChange={this.handleFilterChange}
-          />
+          {this.state.contacts.length > 0 && (
+            <Filter
+              filter={this.filter}
+              onFilterChange={this.handleFilterChange}
+            />
+          )}
+
           <ContactList
             contacts={filteredResults}
             onDeleteContact={this.deleteContact}
