@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import {
@@ -11,35 +11,41 @@ import {
   FormBtn,
 } from './ContactFotm.styled';
 import phonboock from '../../icon/phonboock.png';
-export class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
-  nameInputId = nanoid();
-  numberInputId = nanoid();
 
-  inputChange = evt => {
-    const { name, value } = evt.currentTarget;
-    this.setState({ [name]: value });
+export function ContactForm({onAddContact}) {
+  const [name, setName] = useState('')
+  const [number, setNumber] = useState('')
+  
+  const inputChange = evt => {
+   switch (evt.target.name) {
+    case 'name':
+      setName(evt.target.value)
+      break;
+    case 'number':
+      setNumber(evt.target.value)
+       break;
+     
+     default:
+       return
+   }
   };
-
-  hendlerAddContact = evt => {
+  
+  const hendlerAddContact = evt => {
     evt.preventDefault();
-    const { name, number } = this.state;
-    const { onAddContact } = this.props;
-    onAddContact({ id: nanoid(), name, number });
-    this.reset();
+   
+    const contact = {
+      id: nanoid(), name, number,
+    }
+    onAddContact(contact);
+    reset();
   };
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
+   const reset = () => {
+     setName('')
+     setNumber('')
   };
-  render() {
+  
     return (
-      <ContactsForm onSubmit={this.hendlerAddContact}>
+      <ContactsForm onSubmit={hendlerAddContact}>
         <BoxImg>
           <Img src={phonboock} alt="phonebook" />
         </BoxImg>
@@ -48,9 +54,9 @@ export class ContactForm extends Component {
           <InputContacts
             type="text"
             name="name"
-            value={this.state.name}
+            value={name}
             id="name"
-            onChange={this.inputChange}
+            onChange={inputChange}
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
@@ -59,9 +65,9 @@ export class ContactForm extends Component {
           <InputContacts
             type="tel"
             name="number"
-            value={this.state.number}
+            value={number}
             id="number"
-            onChange={this.inputChange}
+            onChange={inputChange}
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
@@ -71,7 +77,7 @@ export class ContactForm extends Component {
       </ContactsForm>
     );
   }
-}
+
 
 ContactForm.propTypes = {
   onAddContact: PropTypes.func,
